@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             User::factory()->create([
                 'name' => 'Marquete',
                 'email' => 'marquete@fighthouse.local',
+                'password' => bcrypt('senha123'),
             ]);
 
             // 30 alunos com mensalidades variadas
