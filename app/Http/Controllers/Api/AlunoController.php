@@ -49,8 +49,13 @@ class AlunoController extends Controller
 
     public function show(Aluno $aluno): AlunoResource
     {
-        $aluno->load('plano');
-
+        $aluno->load([
+            'plano',
+            'mensalidades' => function ($query) {
+            $query->orderBy('mes_referencia', 'desc');
+            },
+        ]);
+    
         return new AlunoResource($aluno);
     }
 
