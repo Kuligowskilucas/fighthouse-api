@@ -16,6 +16,9 @@ class Plano extends Model
         'frequencia_semanal',
         'ativo',
     ];
+    protected $attributes = [
+        'ativo' => true,
+    ];  
 
     protected function casts(): array
     {

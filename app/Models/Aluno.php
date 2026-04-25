@@ -23,6 +23,10 @@ class Aluno extends Model
         'observacoes',
     ];
 
+    protected $attributes = [
+        'ativo' => true,
+    ];
+
     protected function casts(): array
     {
         return [
