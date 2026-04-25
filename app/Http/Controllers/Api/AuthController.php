@@ -22,7 +22,13 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('api')->plainTextToken;
+        $expiration = config('sanctum.expiration');
+
+        $token = $user->createToken(
+            'api',
+            ['*'],
+            $expiration ? now()->addMinutes($expiration) : null
+        )->plainTextToken;
 
         return response()->json([
             'user' => [
