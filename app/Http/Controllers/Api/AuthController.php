@@ -22,7 +22,13 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('api')->plainTextToken;
+        $expiration = config('sanctum.expiration');
+
+        $token = $user->createToken(
+            'api',
+            ['*'],
+            $expiration ? now()->addMinutes($expiration) : null
+        )->plainTextToken;
 
         return response()->json([
             'user' => [
@@ -40,6 +46,15 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logout realizado com sucesso.',
+        ]);
+    }
+
+    public function logoutAll(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+    
+        return response()->json([
+            'message' => 'Logout realizado em todos os dispositivos.',
         ]);
     }
 

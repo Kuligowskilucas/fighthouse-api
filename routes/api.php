@@ -8,11 +8,13 @@ use App\Http\Controllers\Api\MensalidadeController;
 use App\Http\Controllers\Api\DashboardController;
 
 // Rotas públicas
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1');
 
 // Rotas protegidas
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('logout-all', [AuthController::class, 'logoutAll']);
     Route::get('me', [AuthController::class, 'me']);
 
     Route::apiResource('planos', PlanoController::class);
