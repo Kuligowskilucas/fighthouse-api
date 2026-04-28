@@ -42,3 +42,24 @@ Decisões tomadas no início do desenvolvimento. Validar com o Marquete quando p
 - Backend: Laravel 13 + PostgreSQL + Sanctum
 - Frontend: Next.js 15 + TypeScript + Tailwind + shadcn/ui
 - Infra: Docker (Sail) em dev, hospedagem a definir
+
+cat >> DECISOES.md << 'EOF'
+
+## Gerenciamento de usuários
+
+### Implementado na v1
+- `POST /api/users`: qualquer usuário autenticado pode criar outros usuários (sistema interno, todos são pessoas de confiança).
+- `POST /api/me/change-password`: trocar a própria senha. Exige senha atual como prova de identidade. Invalida todos os outros tokens, mantém o atual.
+- `php artisan user:create`: comando interativo para criar o primeiro admin no deploy.
+- `php artisan user:reset-password {email}`: comando operacional para resetar senha esquecida (Lucas executa quando solicitado). Invalida todos os tokens do usuário.
+
+### Requisitos de senha
+- Mínimo 8 caracteres
+- Pelo menos 1 letra
+- Pelo menos 1 número
+- Aplicado em criação, troca e reset.
+
+### Fora do escopo da v1
+- **Reset de senha por email (forgot password):** requer integração com provedor SMTP (SendGrid/Mailgun/Resend), configuração de domínio (SPF/DKIM) e fluxo de duplo endpoint (forgot/reset). Substituído por reset operacional via comando Artisan na v1. Considerar para v2 quando a integração de email para avisos de mensalidade for implementada.
+- **Roles/permissões:** sistema atual não diferencia "admin" de "operador comum". Aceitável dado o contexto (poucos usuários, todos de confiança). Reavaliar se o sistema crescer.
+EOF
