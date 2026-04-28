@@ -62,4 +62,21 @@ cat >> DECISOES.md << 'EOF'
 ### Fora do escopo da v1
 - **Reset de senha por email (forgot password):** requer integração com provedor SMTP (SendGrid/Mailgun/Resend), configuração de domínio (SPF/DKIM) e fluxo de duplo endpoint (forgot/reset). Substituído por reset operacional via comando Artisan na v1. Considerar para v2 quando a integração de email para avisos de mensalidade for implementada.
 - **Roles/permissões:** sistema atual não diferencia "admin" de "operador comum". Aceitável dado o contexto (poucos usuários, todos de confiança). Reavaliar se o sistema crescer.
-EOF
+
+
+## Geração de mensalidades
+
+### Implementado na v1
+- **Service `GeradorDeMensalidades`**: lógica única, reutilizada por comando e endpoint.
+- **Comando `php artisan mensalidades:gerar`**: aceita `--mes=YYYY-MM` opcional. Agendado para rodar dia 1 de cada mês à meia-noite via `Schedule::command()`.
+- **Endpoint `POST /api/mensalidades/gerar`**: aceita `mes_referencia` opcional no body. Para uso manual via frontend ("gerar mensalidades do mês").
+
+### Regras de negócio
+- Gera apenas para alunos com `ativo = true`.
+- Aluno cadastrado após o último dia do mês de referência **não** recebe mensalidade retroativa.
+- Valor: usa `valor_personalizado` se existir, senão `plano->valor`.
+- Vencimento: `dia_vencimento` do aluno no mês de referência, ajustado para último dia do mês quando o dia não existe (ex: dia 31 em fevereiro vira 28).
+- Idempotente: rodar duas vezes no mesmo mês não duplica (proteção via `firstOrCreate` + unique constraint `[aluno_id, mes_referencia]`).
+
+### A validar com o Marquete (decisão tomada por padrão)
+- **Não gera mensalidade retroativa para alunos novos.** Aluno que matricula dia 15 do mês não recebe mensalidade desse mês — começa a pagar a partir do mês seguinte. Decisão tomada por simplicidade e por ser prática comum em academias. Confirmar se faz sentido.
