@@ -1,58 +1,216 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fight House API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Backend de um sistema de gestão de mensalidades para academia de jiu-jitsu.
 
-## About Laravel
+[![Tests](https://github.com/Kuligowskilucas/fighthouse-api/actions/workflows/tests.yml/badge.svg)](https://github.com/Kuligowskilucas/fighthouse-api/actions/workflows/tests.yml)
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.5-777BB4?logo=php)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+API REST construída em Laravel 13 com PostgreSQL e autenticação via Sanctum, desenvolvida como projeto sem fins lucrativos para a Fight House Club. Substitui o controle manual em caderno por um sistema digital com cadastro de alunos, registro de pagamentos, geração automática de mensalidades e dashboard mensal.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> 🇧🇷 Português · [🇺🇸 English](README.en.md) (em breve)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Sobre o projeto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+A Fight House Club é uma academia de jiu-jitsu cujo dono, Marquete, hoje gerencia as mensalidades dos ~30 alunos em um caderno físico. Este projeto é uma alternativa digital gratuita, focada em três coisas:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Cadastro centralizado** dos alunos com seus respectivos planos.
+2. **Registro de pagamentos** com histórico e cálculo automático de inadimplência.
+3. **Visão mensal consolidada** (recebido, a receber, em atraso) — substitui o "ter que somar a mão a cada mês".
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+A v2 prevê o disparo de mensagens automáticas pelo WhatsApp para alunos inadimplentes; a v1 (este repositório) entrega o backend completo com cobertura de testes e CI.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Stack
+
+- **PHP 8.5** + **Laravel 13**
+- **PostgreSQL 16**
+- **Laravel Sanctum** (autenticação por token bearer)
+- **Docker** via Laravel Sail (ambiente de desenvolvimento)
+- **PHPUnit** para testes feature
+- **GitHub Actions** para CI
+
+---
+
+## Funcionalidades
+
+### Autenticação
+- Login com email e senha, retornando token Sanctum com 7 dias de expiração.
+- Logout do dispositivo atual ou de todos os dispositivos (`logout-all`).
+- Troca de senha pelo próprio usuário (exige senha atual; invalida outros tokens).
+
+### Cadastros
+- **Planos** com nome, valor e frequência semanal.
+- **Alunos** identificados por telefone normalizado, com plano vinculado, dia de vencimento e valor personalizado opcional.
+- **Mensalidades** únicas por aluno e mês, com status calculado automaticamente (paga, atrasada, aberta).
+
+### Operações sobre mensalidades
+- Marcar e desfazer pagamento (registra forma de pagamento e data).
+- Filtros por status, aluno e mês de referência.
+- **Geração automática** de mensalidades:
+  - Comando Artisan agendado para rodar dia 1 de cada mês.
+  - Endpoint manual para disparo via frontend.
+  - Idempotente — pode rodar múltiplas vezes sem duplicar.
+
+### Dashboard
+- Resumo mensal: alunos ativos, totais recebidos, a receber, em atraso.
+- Lista de inadimplentes agrupada por aluno, com valor devido e dias de atraso.
+
+### Operação
+- Comandos Artisan para criar usuário admin (`user:create`) e resetar senha esquecida (`user:reset-password`).
+
+---
+
+## Setup local
+
+### Pré-requisitos
+- Docker e Docker Compose
+- Git
+
+> Não é necessário ter PHP, Composer ou Postgres instalados localmente — tudo roda em containers via Laravel Sail.
+
+### Passo a passo
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clonar o repositório
+git clone https://github.com/Kuligowskilucas/fighthouse-api.git
+cd fighthouse-api
 
-php artisan boost:install
+# 2. Copiar o .env de exemplo
+cp .env.example .env
+
+# 3. Instalar dependências do Composer (executa em container)
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php85-composer:latest \
+    composer install --ignore-platform-reqs
+
+# 4. Subir os containers
+./vendor/bin/sail up -d
+
+# 5. Gerar APP_KEY
+./vendor/bin/sail artisan key:generate
+
+# 6. Rodar migrations e seeders
+./vendor/bin/sail artisan migrate --seed
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+A API estará disponível em `http://localhost`. Em desenvolvimento, o seeder cria o usuário **`marquete@fighthouse.local`** com senha **`senha123`**, além de 30 alunos fictícios e mensalidades variadas.
 
-## Contributing
+### Alias do Sail (recomendado)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Para evitar digitar `./vendor/bin/sail` toda vez, adicione ao seu `~/.bashrc` ou `~/.zshrc`:
 
-## Code of Conduct
+```bash
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+A partir daí, todos os comandos podem ser invocados como `sail artisan ...`, `sail test`, etc.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Comandos úteis
 
-## License
+| Comando | O que faz |
+|---|---|
+| `sail up -d` | Sobe os containers em background |
+| `sail down` | Para os containers |
+| `sail artisan migrate:fresh --seed` | Recria o banco do zero com dados de seed |
+| `sail artisan test` | Roda toda a suíte de testes |
+| `sail artisan tinker` | REPL interativo do Laravel |
+| `sail artisan route:list` | Lista todas as rotas |
+| `sail artisan schedule:list` | Lista os comandos agendados |
+| `sail artisan user:create` | Cria um novo usuário interativamente |
+| `sail artisan user:reset-password {email}` | Reseta a senha de um usuário (operação manual) |
+| `sail artisan mensalidades:gerar` | Gera mensalidades do mês atual manualmente |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Testes
+
+A suíte cobre os fluxos críticos do sistema (autenticação, cadastros, pagamentos, geração de mensalidades, gerenciamento de usuários) com **41 testes feature**:
+
+```bash
+sail artisan test
+```
+
+O CI (GitHub Actions) executa a mesma suíte em cada push e pull request para a `main`, em ambiente Ubuntu + Postgres limpo.
+
+---
+
+## API endpoints (resumo)
+
+Todas as rotas (exceto `POST /api/login`) exigem token Sanctum no header `Authorization: Bearer {token}`.
+
+### Autenticação
+| Método | Rota | Descrição |
+|---|---|---|
+| POST | `/api/login` | Login (rate-limited a 5 req/min) |
+| POST | `/api/logout` | Logout do dispositivo atual |
+| POST | `/api/logout-all` | Logout de todos os dispositivos |
+| GET | `/api/me` | Dados do usuário autenticado |
+| POST | `/api/me/change-password` | Trocar a própria senha |
+
+### Recursos
+| Método | Rota | Descrição |
+|---|---|---|
+| GET / POST | `/api/users` | Listar / criar usuários |
+| GET / POST / PUT / DELETE | `/api/planos` | CRUD de planos |
+| GET / POST / PUT / DELETE | `/api/alunos` | CRUD de alunos (filtros: `search`, `ativo`, `plano_id`) |
+| GET / POST / PUT / DELETE | `/api/mensalidades` | CRUD de mensalidades (filtros: `status`, `aluno_id`, `mes_referencia`) |
+
+### Ações específicas
+| Método | Rota | Descrição |
+|---|---|---|
+| POST | `/api/mensalidades/{id}/marcar-pagamento` | Registra pagamento |
+| POST | `/api/mensalidades/{id}/desfazer-pagamento` | Reverte pagamento |
+| POST | `/api/mensalidades/gerar` | Gera mensalidades do mês (manual) |
+
+### Dashboard
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/dashboard/resumo` | Resumo mensal (aceita `?mes=YYYY-MM-DD`) |
+| GET | `/api/dashboard/inadimplentes` | Lista de inadimplentes |
+
+---
+
+## Estrutura do projeto
+
+```
+app/
+├── Console/Commands/      # Comandos Artisan (user:create, mensalidades:gerar, etc)
+├── Http/
+│   ├── Controllers/Api/   # Controllers REST
+│   ├── Middleware/        # SecurityHeaders
+│   ├── Requests/          # Form Requests (validação)
+│   └── Resources/         # API Resources (serialização)
+├── Models/                # Eloquent models
+└── Services/              # GeradorDeMensalidades
+database/
+├── factories/             # Factories para testes e seeders
+├── migrations/            # Schema do banco
+└── seeders/               # PlanoSeeder, DatabaseSeeder
+routes/
+├── api.php                # Rotas da API
+└── console.php            # Comandos agendados
+tests/
+└── Feature/               # Testes feature (41 no total)
+```
+
+---
+
+## Decisões técnicas
+
+Decisões de arquitetura, regras de negócio, escolhas de escopo e itens pendentes de validação estão documentados em [DECISOES.md](DECISOES.md).
+
+---
+
+## Licença
+
+Sem licença aberta formal. Código publicado para fins de portfólio e uso da Fight House Club.
