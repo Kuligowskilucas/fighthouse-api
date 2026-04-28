@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Requests\Mensalidade\GerarMensalidadesRequest;
+use App\Services\GeradorDeMensalidades;
 
 class MensalidadeController extends Controller
 {
@@ -124,5 +126,16 @@ class MensalidadeController extends Controller
         $mensalidade->load('aluno.plano');
 
         return new MensalidadeResource($mensalidade);
+    }
+
+    public function gerar(GerarMensalidadesRequest $request, GeradorDeMensalidades $gerador): JsonResponse 
+    {
+        $mesReferencia = $request->filled('mes_referencia')
+            ? Carbon::createFromFormat('Y-m', $request->input('mes_referencia'))
+            : null;
+
+        $resultado = $gerador->gerar($mesReferencia);
+
+        return response()->json($resultado);
     }
 }

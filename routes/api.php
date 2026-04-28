@@ -21,12 +21,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('users', [UserController::class, 'store']);
 
-    Route::apiResource('planos', PlanoController::class);
-    Route::apiResource('alunos', AlunoController::class);
-    Route::apiResource('mensalidades', MensalidadeController::class);
-
+    Route::post('mensalidades/gerar', [MensalidadeController::class, 'gerar']);
     Route::post('mensalidades/{mensalidade}/marcar-pagamento', [MensalidadeController::class, 'marcarPagamento']);
     Route::post('mensalidades/{mensalidade}/desfazer-pagamento', [MensalidadeController::class, 'desfazerPagamento']);
+
+    Route::apiResource('mensalidades', MensalidadeController::class);
+    Route::apiResource('planos', PlanoController::class);
+    Route::apiResource('alunos', AlunoController::class);
 
     Route::get('dashboard/resumo', [DashboardController::class, 'resumoMensal']);
     Route::get('dashboard/inadimplentes', [DashboardController::class, 'inadimplentes']);
