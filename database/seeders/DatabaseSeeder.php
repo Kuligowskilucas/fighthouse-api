@@ -22,22 +22,35 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('senha123'),
             ]);
 
-            // 30 alunos com mensalidades variadas
             Aluno::factory(30)->create()->each(function ($aluno) {
-                // Mensalidade do mês atual (ainda não paga)
-                Mensalidade::factory()->create(['aluno_id' => $aluno->id]);
+            // Mensalidade do mês atual
+            $mensalidadeAtual = Mensalidade::factory()->create(['aluno_id' => $aluno->id]);
+            if (fake()->boolean(60)) {
+                $mensalidadeAtual->update([
+                    'data_pagamento' => now()->subDays(rand(1, 5)),
+                    'forma_pagamento' => fake()->randomElement(['pix', 'dinheiro', 'cartao']),
+                ]);
+            }
 
-                // 70% dos alunos têm mês anterior pago
-                if (fake()->boolean(70)) {
-                    Mensalidade::factory()
-                        ->paga()
-                        ->create([
-                            'aluno_id' => $aluno->id,
-                            'mes_referencia' => now()->subMonth()->startOfMonth(),
-                            'data_vencimento' => now()->subMonth()->day($aluno->dia_vencimento),
-                        ]);
-                }
-            });
+            // 70% dos alunos têm mês anterior pago
+            if (fake()->boolean(70)) {
+                Mensalidade::factory()
+                    ->paga()
+                    ->create([
+                        'aluno_id' => $aluno->id,
+                        'mes_referencia' => now()->subMonth()->startOfMonth(),
+                        'data_vencimento' => now()->subMonth()->day($aluno->dia_vencimento),
+                    ]);
+            } else {
+                // 30% restantes: mês anterior vencido e NÃO pago (vira inadimplente)
+                Mensalidade::factory()
+                    ->create([
+                        'aluno_id' => $aluno->id,
+                        'mes_referencia' => now()->subMonth()->startOfMonth(),
+                        'data_vencimento' => now()->subMonth()->day($aluno->dia_vencimento),
+                    ]);
+            }
+        });
         }
     }
 }
