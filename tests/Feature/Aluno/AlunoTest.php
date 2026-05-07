@@ -48,21 +48,6 @@ class AlunoTest extends TestCase
         ]);
     }
 
-    public function test_telefone_duplicado_retorna_422(): void
-    {
-        Aluno::factory()->create(['telefone' => '5541999998888']);
-
-        $response = $this->postJson('/api/alunos', [
-            'nome' => 'João Silva',
-            'telefone' => '5541999998888',
-            'plano_id' => Plano::first()->id,
-            'dia_vencimento' => 10,
-            'data_matricula' => '2026-01-15',
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['telefone']);
-    }
 
     public function test_telefone_e_normalizado_na_criacao(): void
     {

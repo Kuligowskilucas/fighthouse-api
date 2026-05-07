@@ -27,13 +27,7 @@ class UpdateAlunoRequest extends FormRequest
 
         return [
             'nome' => ['sometimes', 'required', 'string', 'max:255'],
-            'telefone' => [
-                'sometimes',
-                'required',
-                'string',
-                'regex:/^\d{10,13}$/',
-                Rule::unique('alunos', 'telefone')->ignore($alunoId),
-            ],
+            'telefone' => ['sometimes','required','string','regex:/^\d{10,13}$/'],
             'email' => ['sometimes', 'nullable', 'email', 'max:255'],
             'plano_id' => ['sometimes', 'required', 'integer', 'exists:planos,id'],
             'valor_personalizado' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:9999.99'],

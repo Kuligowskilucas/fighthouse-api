@@ -24,7 +24,7 @@ class StoreAlunoRequest extends FormRequest
     {
         return [
             'nome' => ['required', 'string', 'max:255'],
-            'telefone' => ['required', 'string', 'regex:/^\d{10,13}$/', 'unique:alunos,telefone'],
+            'telefone' => ['required', 'string', 'regex:/^\d{10,13}$/'],
             'email' => ['nullable', 'email', 'max:255'],
             'plano_id' => ['required', 'integer', 'exists:planos,id'],
             'valor_personalizado' => ['nullable', 'numeric', 'min:0', 'max:9999.99'],
@@ -39,7 +39,6 @@ class StoreAlunoRequest extends FormRequest
     {
         return [
             'telefone.regex' => 'Telefone deve conter entre 10 e 13 dígitos (só números).',
-            'telefone.unique' => 'Já existe um aluno com esse telefone.',
             'plano_id.exists' => 'O plano selecionado não existe.',
             'dia_vencimento.max' => 'O dia de vencimento deve estar entre 1 e 31.',
             'data_matricula.before_or_equal' => 'A data de matrícula não pode ser no futuro.',
