@@ -73,7 +73,6 @@ class DashboardController extends Controller
             ->orderBy('data_vencimento', 'asc')
             ->get();
 
-        // Agrupa por aluno pra mostrar todas as pendências de cada um
         $porAluno = $mensalidades
             ->groupBy('aluno_id')
             ->map(function ($mensalidadesDoAluno) {
