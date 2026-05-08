@@ -1,27 +1,27 @@
 # Fight House API
 
-> Backend de um sistema de gestão de mensalidades para academia de jiu-jitsu.
+> Backend of a monthly fee management system for a jiu-jitsu academy.
 
 [![Tests](https://github.com/Kuligowskilucas/fighthouse-api/actions/workflows/tests.yml/badge.svg)](https://github.com/Kuligowskilucas/fighthouse-api/actions/workflows/tests.yml)
 ![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.5-777BB4?logo=php)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
 
-API REST construída em Laravel 13 com PostgreSQL e autenticação via Sanctum, desenvolvida como projeto sem fins lucrativos para a Fight House Club. Substitui o controle manual em caderno por um sistema digital com cadastro de alunos, registro de pagamentos, geração automática de mensalidades e dashboard mensal.
+REST API built with Laravel 13 and PostgreSQL, using Sanctum for authentication. A non‑profit project developed for Fight House Club, replacing a paper‑based system with digital student registration, payment tracking, automatic monthly fee generation, and a monthly dashboard.
 
-> 🇧🇷 Português · [🇺🇸 English](README.en.md) (em breve)
+> 🇧🇷 Português · [🇺🇸 English](README.en.md) (coming soon)
 
 ---
 
-## Sobre o projeto
+## About the project
 
-A Fight House Club é uma academia de jiu-jitsu cujo dono, Marquete, hoje gerencia as mensalidades dos ~30 alunos em um caderno físico. Este projeto é uma alternativa digital gratuita, focada em três coisas:
+Fight House Club is a jiu-jitsu academy whose owner, Marquete, currently manages the monthly fees of ~30 students in a physical notebook. This project is a free digital alternative focused on three things:
 
-1. **Cadastro centralizado** dos alunos com seus respectivos planos.
-2. **Registro de pagamentos** com histórico e cálculo automático de inadimplência.
-3. **Visão mensal consolidada** (recebido, a receber, em atraso) — substitui o "ter que somar a mão a cada mês".
+1. **Centralized registration** of students with their respective plans.
+2. **Payment tracking** with history and automatic delinquency calculation.
+3. **Consolidated monthly overview** (received, to receive, overdue) — replacing the need to sum everything manually each month.
 
-A v2 prevê o disparo de mensagens automáticas pelo WhatsApp para alunos inadimplentes; a v1 (este repositório) entrega o backend completo com cobertura de testes e CI.
+v2 is planned to include automatic WhatsApp messages for overdue students; v1 (this repository) delivers the complete backend with test coverage and CI.
 
 ---
 
@@ -29,61 +29,61 @@ A v2 prevê o disparo de mensagens automáticas pelo WhatsApp para alunos inadim
 
 - **PHP 8.5** + **Laravel 13**
 - **PostgreSQL 16**
-- **Laravel Sanctum** (autenticação por token bearer)
-- **Docker** via Laravel Sail (ambiente de desenvolvimento)
-- **PHPUnit** para testes feature
-- **GitHub Actions** para CI
+- **Laravel Sanctum** (bearer token authentication)
+- **Docker** via Laravel Sail (development environment)
+- **PHPUnit** for feature tests
+- **GitHub Actions** for CI
 
 ---
 
-## Funcionalidades
+## Features
 
-### Autenticação
-- Login com email e senha, retornando token Sanctum com 7 dias de expiração.
-- Logout do dispositivo atual ou de todos os dispositivos (`logout-all`).
-- Troca de senha pelo próprio usuário (exige senha atual; invalida outros tokens).
+### Authentication
+- Login with email and password, returning a Sanctum token with 7‑day expiration.
+- Logout from current device or all devices (`logout-all`).
+- Self‑service password change (requires current password; invalidates other tokens).
 
-### Cadastros
-- **Planos** com nome, valor e frequência semanal.
-- **Alunos** identificados por telefone normalizado, com plano vinculado, dia de vencimento e valor personalizado opcional.
-- **Mensalidades** únicas por aluno e mês, com status calculado automaticamente (paga, atrasada, aberta).
+### Registrations
+- **Plans** with name, price, and weekly frequency.
+- **Students** identified by normalized phone number, linked to a plan, with a due date and an optional custom fee amount.
+- **Monthly fees** — one per student per month, with an automatically calculated status (paid, overdue, open).
 
-### Operações sobre mensalidades
-- Marcar e desfazer pagamento (registra forma de pagamento e data).
-- Filtros por status, aluno e mês de referência.
-- **Geração automática** de mensalidades:
-  - Comando Artisan agendado para rodar dia 1 de cada mês.
-  - Endpoint manual para disparo via frontend.
-  - Idempotente — pode rodar múltiplas vezes sem duplicar.
+### Monthly fee operations
+- Mark and undo payments (records payment method and date).
+- Filters by status, student, and reference month.
+- **Automatic generation** of monthly fees:
+  - Scheduled Artisan command that runs on the 1st of each month.
+  - Manual endpoint to trigger from the frontend.
+  - Idempotent — can be run multiple times without creating duplicates.
 
 ### Dashboard
-- Resumo mensal: alunos ativos, totais recebidos, a receber, em atraso.
-- Lista de inadimplentes agrupada por aluno, com valor devido e dias de atraso.
+- Monthly summary: active students, total received, to receive, overdue.
+- Delinquent list grouped by student, with amount owed and days overdue.
 
-### Operação
-- Comandos Artisan para criar usuário admin (`user:create`) e resetar senha esquecida (`user:reset-password`).
+### Operations
+- Artisan commands to create an admin user (`user:create`) and reset a forgotten password (`user:reset-password`).
 
 ---
 
-## Setup local
+## Local setup
 
-### Pré-requisitos
-- Docker e Docker Compose
+### Prerequisites
+- Docker and Docker Compose
 - Git
 
-> Não é necessário ter PHP, Composer ou Postgres instalados localmente — tudo roda em containers via Laravel Sail.
+> No need to have PHP, Composer, or Postgres installed locally — everything runs in containers via Laravel Sail.
 
-### Passo a passo
+### Step by step
 
 ```bash
-# 1. Clonar o repositório
+# 1. Clone the repository
 git clone https://github.com/Kuligowskilucas/fighthouse-api.git
 cd fighthouse-api
 
-# 2. Copiar o .env de exemplo
+# 2. Copy the example .env file
 cp .env.example .env
 
-# 3. Instalar dependências do Composer (executa em container)
+# 3. Install Composer dependencies (runs in a container)
 docker run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$(pwd):/var/www/html" \
@@ -91,126 +91,126 @@ docker run --rm \
     laravelsail/php85-composer:latest \
     composer install --ignore-platform-reqs
 
-# 4. Subir os containers
+# 4. Start the containers
 ./vendor/bin/sail up -d
 
-# 5. Gerar APP_KEY
+# 5. Generate APP_KEY
 ./vendor/bin/sail artisan key:generate
 
-# 6. Rodar migrations e seeders
+# 6. Run migrations and seeders
 ./vendor/bin/sail artisan migrate --seed
 ```
 
-A API estará disponível em `http://localhost`. Em desenvolvimento, o seeder cria o usuário **`marquete@fighthouse.local`** com senha **`senha123`**, além de 30 alunos fictícios e mensalidades variadas.
+The API will be available at `http://localhost`. In development, the seeder creates the user **`marquete@fighthouse.local`** with password **`senha123`**, along with 30 fictional students and varied monthly fees.
 
-### Alias do Sail (recomendado)
+### Sail alias (recommended)
 
-Para evitar digitar `./vendor/bin/sail` toda vez, adicione ao seu `~/.bashrc` ou `~/.zshrc`:
+To avoid typing `./vendor/bin/sail` every time, add this to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 ```
 
-A partir daí, todos os comandos podem ser invocados como `sail artisan ...`, `sail test`, etc.
+From that point on, all commands can be invoked as `sail artisan ...`, `sail test`, and so on.
 
 ---
 
-## Comandos úteis
+## Useful commands
 
-| Comando | O que faz |
+| Command | Description |
 |---|---|
-| `sail up -d` | Sobe os containers em background |
-| `sail down` | Para os containers |
-| `sail artisan migrate:fresh --seed` | Recria o banco do zero com dados de seed |
-| `sail artisan test` | Roda toda a suíte de testes |
-| `sail artisan tinker` | REPL interativo do Laravel |
-| `sail artisan route:list` | Lista todas as rotas |
-| `sail artisan schedule:list` | Lista os comandos agendados |
-| `sail artisan user:create` | Cria um novo usuário interativamente |
-| `sail artisan user:reset-password {email}` | Reseta a senha de um usuário (operação manual) |
-| `sail artisan mensalidades:gerar` | Gera mensalidades do mês atual manualmente |
+| `sail up -d` | Start containers in the background |
+| `sail down` | Stop containers |
+| `sail artisan migrate:fresh --seed` | Recreate the database from scratch with seed data |
+| `sail artisan test` | Run the entire test suite |
+| `sail artisan tinker` | Laravel interactive REPL |
+| `sail artisan route:list` | List all routes |
+| `sail artisan schedule:list` | List scheduled commands |
+| `sail artisan user:create` | Create a new user interactively |
+| `sail artisan user:reset-password {email}` | Reset a user's password (manual operation) |
+| `sail artisan mensalidades:gerar` | Generate current month's fees manually |
 
 ---
 
-## Testes
+## Tests
 
-A suíte cobre os fluxos críticos do sistema (autenticação, cadastros, pagamentos, geração de mensalidades, gerenciamento de usuários) com **41 testes feature**:
+The suite covers the system’s critical flows (authentication, registrations, payments, invoice generation, and user management) with **41 feature tests**:
 
 ```bash
 sail artisan test
 ```
 
-O CI (GitHub Actions) executa a mesma suíte em cada push e pull request para a `main`, em ambiente Ubuntu + Postgres limpo.
+The CI pipeline (GitHub Actions) runs the same test suite on every push and pull request to `main`, in a clean Ubuntu + Postgres environment.
 
 ---
 
-## API endpoints (resumo)
+## API endpoints (Summary)
 
-Todas as rotas (exceto `POST /api/login`) exigem token Sanctum no header `Authorization: Bearer {token}`.
+All routes (except `POST /api/login`) require a Sanctum token in the `Authorization: Bearer {token}`.
 
-### Autenticação
-| Método | Rota | Descrição |
+### Authentication
+| Method | Route | Description |
 |---|---|---|
-| POST | `/api/login` | Login (rate-limited a 5 req/min) |
-| POST | `/api/logout` | Logout do dispositivo atual |
-| POST | `/api/logout-all` | Logout de todos os dispositivos |
-| GET | `/api/me` | Dados do usuário autenticado |
-| POST | `/api/me/change-password` | Trocar a própria senha |
+| POST | `/api/login` | Login (rate-limited to 5 requests/minute) |
+| POST | `/api/logout` | Logout from the current device |
+| POST | `/api/logout-all` | Logout from all devices |
+| GET | `/api/me` | Authenticated user data |
+| POST | `/api/me/change-password` | Change own password |
 
-### Recursos
-| Método | Rota | Descrição |
+### Resources
+| Method | Route | Description |
 |---|---|---|
-| GET / POST | `/api/users` | Listar / criar usuários |
-| GET / POST / PUT / DELETE | `/api/planos` | CRUD de planos |
-| GET / POST / PUT / DELETE | `/api/alunos` | CRUD de alunos (filtros: `search`, `ativo`, `plano_id`) |
-| GET / POST / PUT / DELETE | `/api/mensalidades` | CRUD de mensalidades (filtros: `status`, `aluno_id`, `mes_referencia`) |
+| GET / POST | `/api/users` | List / create users |
+| GET / POST / PUT / DELETE | `/api/planos` | Plans CRUD |
+| GET / POST / PUT / DELETE | `/api/alunos` | Students CRUD (filters: `search`, `ativo`, `plano_id`) |
+| GET / POST / PUT / DELETE | `/api/mensalidades` | Monthly payments CRUD (filters: `status`, `aluno_id`, `mes_referencia`) |
 
-### Ações específicas
-| Método | Rota | Descrição |
+### Specific Actions
+| Method | Route | Description |
 |---|---|---|
-| POST | `/api/mensalidades/{id}/marcar-pagamento` | Registra pagamento |
-| POST | `/api/mensalidades/{id}/desfazer-pagamento` | Reverte pagamento |
-| POST | `/api/mensalidades/gerar` | Gera mensalidades do mês (manual) |
+| POST | `/api/mensalidades/{id}/marcar-pagamento` | Register payment |
+| POST | `/api/mensalidades/{id}/desfazer-pagamento` | Revert payment |
+| POST | `/api/mensalidades/gerar` | Generate monthly payments for the current month (manual) |
 
 ### Dashboard
-| Método | Rota | Descrição |
+| Method | Route | Description |
 |---|---|---|
-| GET | `/api/dashboard/resumo` | Resumo mensal (aceita `?mes=YYYY-MM-DD`) |
-| GET | `/api/dashboard/inadimplentes` | Lista de inadimplentes |
+| GET | `/api/dashboard/resumo` | Monthly summary (accepts `?mes=YYYY-MM-DD`) |
+| GET | `/api/dashboard/inadimplentes` | List overdue students |
 
 ---
 
-## Estrutura do projeto
+## Project Structure
 
 ```
 app/
-├── Console/Commands/      # Comandos Artisan (user:create, mensalidades:gerar, etc)
+├── Console/Commands/      # Artisan commands (user:create, mensalidades:gerar, etc.)
 ├── Http/
-│   ├── Controllers/Api/   # Controllers REST
+│   ├── Controllers/Api/   # REST controllers
 │   ├── Middleware/        # SecurityHeaders
-│   ├── Requests/          # Form Requests (validação)
-│   └── Resources/         # API Resources (serialização)
+│   ├── Requests/          # Form Requests (validation)
+│   └── Resources/         # API Resources (serialization)
 ├── Models/                # Eloquent models
-└── Services/              # GeradorDeMensalidades
+└── Services/              # MonthlyPaymentGenerator
 database/
-├── factories/             # Factories para testes e seeders
-├── migrations/            # Schema do banco
+├── factories/             # Factories for tests and seeders
+├── migrations/            # Database schema
 └── seeders/               # PlanoSeeder, DatabaseSeeder
 routes/
-├── api.php                # Rotas da API
-└── console.php            # Comandos agendados
+├── api.php                # API routes
+└── console.php            # Scheduled commands
 tests/
-└── Feature/               # Testes feature (41 no total)
+└── Feature/               # Feature tests (41 total)
 ```
 
 ---
 
-## Decisões técnicas
+## Technical Decisions
 
-Decisões de arquitetura, regras de negócio, escolhas de escopo e itens pendentes de validação estão documentados em [DECISOES.md](DECISOES.md).
+Architecture decisions, business rules, scope choices, and pending validation items are documented in [DECISOES.md](DECISOES.md).
 
 ---
 
-## Licença
+## License
 
-Sem licença aberta formal. Código publicado para fins de portfólio e uso da Fight House Club.
+No formal open-source license. The code is published for portfolio purposes and for use by Fight House Club.
