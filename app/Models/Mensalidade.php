@@ -49,6 +49,6 @@ class Mensalidade extends Model
      */
     public function estaAtrasada(): bool
     {
-        return !$this->estaPaga() && $this->data_vencimento->isPast();
+       return !$this->estaPaga() && $this->data_vencimento->lt(\Carbon\Carbon::today());
     }
 }
