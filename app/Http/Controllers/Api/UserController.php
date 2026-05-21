@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\User\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -46,15 +47,20 @@ class UserController extends Controller
      */
     public function meuAluno(Request $request): AlunoResource|JsonResponse
     {
-        $user = $request->user()->load('aluno.plano');
+        $aluno = $request->user()->aluno;
 
-        if (! $user->aluno) {
+        if (! $aluno) {
             return response()->json([
                 'message' => 'Nenhum aluno vinculado a este usuário.',
             ], 404);
         }
 
-        return new AlunoResource($user->aluno);
+        $aluno->load([
+            'plano',
+            'mensalidades' => fn ($q) => $q->orderBy('mes_referencia', 'desc'),
+        ]);
+
+        return new AlunoResource($aluno);
     }
 
     /**
@@ -76,5 +82,26 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Senha alterada com sucesso. Outros dispositivos foram desconectados.',
         ]);
+    }
+
+    public function update(UpdateUserRequest $request, User $user): UserResource
+    {
+        $user->update($request->validated());
+
+        return new UserResource($user);
+    }
+
+    public function destroy(Request $request, User $user): JsonResponse
+    {
+        if ($user->id === $request->user()->id) {
+            return response()->json([
+                'message' => 'Você não pode excluir sua própria conta.',
+            ], 422);
+        }
+
+        $user->tokens()->delete();
+        $user->delete();
+
+        return response()->json(['message' => 'Usuário excluído com sucesso.']);
     }
 }
