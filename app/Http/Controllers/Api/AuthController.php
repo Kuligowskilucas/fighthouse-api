@@ -61,11 +61,13 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
-
+    
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
+            'id'       => $user->id,
+            'name'     => $user->name,
+            'email'    => $user->email,
+            'role'     => $user->role,
+            'aluno_id' => $user->aluno_id,
         ]);
     }
 }

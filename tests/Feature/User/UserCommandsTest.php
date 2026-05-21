@@ -16,44 +16,48 @@ class UserCommandsTest extends TestCase
         $this->artisan('user:create')
             ->expectsQuestion('Nome', 'João Silva')
             ->expectsQuestion('Email', 'joao@example.com')
+            ->expectsChoice('Role', 'professor', ['admin', 'professor', 'aluno'])
             ->expectsQuestion('Senha', 'senha1234')
             ->expectsOutput('Usuário criado com sucesso!')
             ->assertSuccessful();
-
+    
         $this->assertDatabaseHas('users', [
-            'name' => 'João Silva',
+            'name'  => 'João Silva',
             'email' => 'joao@example.com',
+            'role'  => 'professor',
         ]);
-
+    
         $user = User::where('email', 'joao@example.com')->first();
         $this->assertTrue(Hash::check('senha1234', $user->password));
     }
-
+    
     public function test_user_create_falha_com_senha_fraca(): void
     {
         $this->artisan('user:create')
             ->expectsQuestion('Nome', 'João Silva')
             ->expectsQuestion('Email', 'joao@example.com')
+            ->expectsChoice('Role', 'professor', ['admin', 'professor', 'aluno'])
             ->expectsQuestion('Senha', '123')
             ->expectsOutput('Erro de validação:')
             ->assertFailed();
-
+    
         $this->assertDatabaseMissing('users', [
             'email' => 'joao@example.com',
         ]);
     }
-
+    
     public function test_user_create_falha_com_email_duplicado(): void
     {
         User::factory()->create(['email' => 'existente@example.com']);
-
+    
         $this->artisan('user:create')
             ->expectsQuestion('Nome', 'Outro')
             ->expectsQuestion('Email', 'existente@example.com')
+            ->expectsChoice('Role', 'professor', ['admin', 'professor', 'aluno'])
             ->expectsQuestion('Senha', 'senha1234')
             ->expectsOutput('Erro de validação:')
             ->assertFailed();
-
+    
         $this->assertDatabaseCount('users', 1);
     }
 
