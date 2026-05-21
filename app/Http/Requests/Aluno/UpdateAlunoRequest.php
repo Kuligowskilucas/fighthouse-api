@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Aluno;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateAlunoRequest extends FormRequest
 {
@@ -23,18 +22,17 @@ class UpdateAlunoRequest extends FormRequest
 
     public function rules(): array
     {
-        $alunoId = $this->route('aluno')->id;
-
         return [
-            'nome' => ['sometimes', 'required', 'string', 'max:255'],
-            'telefone' => ['sometimes','required','string','regex:/^\d{10,13}$/'],
-            'email' => ['sometimes', 'nullable', 'email', 'max:255'],
-            'plano_id' => ['sometimes', 'required', 'integer', 'exists:planos,id'],
+            'nome'                => ['sometimes', 'required', 'string', 'max:255'],
+            'telefone'            => ['sometimes', 'required', 'string', 'regex:/^\d{10,13}$/'],
+            'email'               => ['sometimes', 'nullable', 'email', 'max:255'],
+            'plano_id'            => ['sometimes', 'required', 'integer', 'exists:planos,id'],
             'valor_personalizado' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:9999.99'],
-            'dia_vencimento' => ['sometimes', 'required', 'integer', 'min:1', 'max:31'],
-            'data_matricula' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
-            'ativo' => ['sometimes', 'boolean'],
-            'observacoes' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'dia_vencimento'      => ['sometimes', 'required', 'integer', 'min:1', 'max:31'],
+            'data_matricula'      => ['sometimes', 'required', 'date', 'before_or_equal:today'],
+            'horario_treino'      => ['sometimes', 'nullable', 'string', 'max:100'],
+            'ativo'               => ['sometimes', 'boolean'],
+            'observacoes'         => ['sometimes', 'nullable', 'string', 'max:1000'],
         ];
     }
 }

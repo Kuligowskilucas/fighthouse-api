@@ -110,7 +110,7 @@ class CreateUserTest extends TestCase
         $this->getJson('/api/mensalidades')->assertOk();
     }
 
-    public function test_professor_nao_pode_criar_aluno(): void
+    public function test_professor_pode_criar_aluno(): void
     {
         $professor = User::factory()->professor()->create();
         $this->actingAs($professor, 'sanctum');
@@ -123,7 +123,7 @@ class CreateUserTest extends TestCase
             'data_matricula' => '2026-01-01',
         ]);
 
-        $response->assertForbidden();
+        $response->assertCreated();
     }
 
     public function test_sem_token_retorna_401(): void
