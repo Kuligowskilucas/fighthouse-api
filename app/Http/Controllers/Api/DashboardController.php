@@ -41,28 +41,27 @@ class DashboardController extends Controller
         $valorAtrasado = (float) $atrasadasGeral->sum('valor');
 
         return response()->json([
-            'mes_referencia' => $mesReferencia->format('Y-m-d'),
-            'alunos_ativos' => $alunosAtivos,
+            'mes_referencia'    => $mesReferencia->format('Y-m-d'),
+            'alunos_ativos'     => $alunosAtivos,
             'mensalidades_do_mes' => [
-                'total' => $mensalidadesDoMes->count(),
-                'pagas' => $mensalidadesDoMes->whereNotNull('data_pagamento')->count(),
+                'total'    => $mensalidadesDoMes->count(),
+                'pagas'    => $mensalidadesDoMes->whereNotNull('data_pagamento')->count(),
                 'em_aberto' => $mensalidadesDoMes->whereNull('data_pagamento')->count(),
             ],
             'financeiro' => [
-                'recebido_no_mes' => $recebido,
-                'a_receber_no_mes' => $aReceber,
+                'recebido_no_mes'      => $recebido,
+                'a_receber_no_mes'     => $aReceber,
                 'total_atrasado_geral' => $valorAtrasado,
             ],
             'inadimplencia' => [
-                'quantidade_atrasadas' => $atrasadasGeral->count(),
-                'alunos_inadimplentes' => $atrasadasGeral->pluck('aluno_id')->unique()->count(),
+                'quantidade_atrasadas'  => $atrasadasGeral->count(),
+                'alunos_inadimplentes'  => $atrasadasGeral->pluck('aluno_id')->unique()->count(),
             ],
         ]);
     }
 
     /**
      * Lista de alunos inadimplentes (mensalidades atrasadas).
-     * Útil pra tela de "alunos pra cobrar".
      */
     public function inadimplentes(Request $request): JsonResponse
     {
@@ -80,14 +79,14 @@ class DashboardController extends Controller
 
                 return [
                     'aluno' => [
-                        'id' => $aluno->id,
-                        'nome' => $aluno->nome,
+                        'id'       => $aluno->id,
+                        'nome'     => $aluno->nome,
                         'telefone' => $aluno->telefone,
-                        'email' => $aluno->email,
-                        'plano' => $aluno->plano->nome,
+                        'email'    => $aluno->email,
+                        'plano'    => $aluno->plano->nome,
                     ],
-                    'quantidade_atrasadas' => $mensalidadesDoAluno->count(),
-                    'valor_total_devido' => (float) $mensalidadesDoAluno->sum('valor'),
+                    'quantidade_atrasadas'  => $mensalidadesDoAluno->count(),
+                    'valor_total_devido'    => (float) $mensalidadesDoAluno->sum('valor'),
                     'mensalidade_mais_antiga' => MensalidadeResource::make(
                         $mensalidadesDoAluno->sortBy('data_vencimento')->first()
                     ),
@@ -99,9 +98,29 @@ class DashboardController extends Controller
             ->values();
 
         return response()->json([
-            'data' => $porAluno,
+            'data'                     => $porAluno,
             'total_alunos_inadimplentes' => $porAluno->count(),
-            'valor_total_devido' => (float) $mensalidades->sum('valor'),
+            'valor_total_devido'       => (float) $mensalidades->sum('valor'),
+        ]);
+    }
+
+    /**
+     * Pagamentos recebidos no dia atual.
+     * Filtra mensalidades onde data_pagamento = hoje, ordenadas por updated_at desc
+     * (os mais recentes primeiro, útil pra conferir o que acabou de entrar).
+     */
+    public function recebidosHoje(): JsonResponse
+    {
+        $mensalidades = Mensalidade::query()
+            ->with('aluno')
+            ->whereDate('data_pagamento', Carbon::today())
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'data'           => MensalidadeResource::collection($mensalidades),
+            'total_recebido' => (float) $mensalidades->sum('valor'),
+            'quantidade'     => $mensalidades->count(),
         ]);
     }
 }

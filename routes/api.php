@@ -15,9 +15,9 @@ Route::post('login', [AuthController::class, 'login'])
 // ─── Autenticado (todos os roles) ─────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('logout',      [AuthController::class, 'logout']);
-    Route::post('logout-all',  [AuthController::class, 'logoutAll']);
-    Route::get('me',           [AuthController::class, 'me']);
+    Route::post('logout',             [AuthController::class, 'logout']);
+    Route::post('logout-all',         [AuthController::class, 'logoutAll']);
+    Route::get('me',                  [AuthController::class, 'me']);
     Route::post('me/change-password', [UserController::class, 'changePassword']);
 
     // ─── Admin + Professor ─────────────────────────────────────────────────────
@@ -32,10 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('alunos/{aluno}', [AlunoController::class, 'destroy']);
 
         // Mensalidades
-        Route::get('mensalidades',                                      [MensalidadeController::class, 'index']);
-        Route::get('mensalidades/{mensalidade}',                        [MensalidadeController::class, 'show']);
-        Route::post('mensalidades/{mensalidade}/marcar-pagamento',      [MensalidadeController::class, 'marcarPagamento']);
-        Route::post('mensalidades/{mensalidade}/desfazer-pagamento',    [MensalidadeController::class, 'desfazerPagamento']);
+        Route::get('mensalidades',                                   [MensalidadeController::class, 'index']);
+        Route::get('mensalidades/{mensalidade}',                     [MensalidadeController::class, 'show']);
+        Route::post('mensalidades/{mensalidade}/marcar-pagamento',   [MensalidadeController::class, 'marcarPagamento']);
+        Route::post('mensalidades/{mensalidade}/desfazer-pagamento', [MensalidadeController::class, 'desfazerPagamento']);
 
         // Planos — leitura
         Route::get('planos',         [PlanoController::class, 'index']);
@@ -55,17 +55,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('planos/{plano}', [PlanoController::class, 'destroy']);
 
         // Usuários e Dashboard
-        Route::get('users',  [UserController::class, 'index']);
-        Route::post('users', [UserController::class, 'store']);
-        Route::patch('users/{user}',  [UserController::class, 'update']);
-        Route::delete('users/{user}', [UserController::class, 'destroy']);
-        Route::get('dashboard/resumo',        [DashboardController::class, 'resumoMensal']);
-        Route::get('dashboard/inadimplentes', [DashboardController::class, 'inadimplentes']);
+        Route::get('users',             [UserController::class, 'index']);
+        Route::post('users',            [UserController::class, 'store']);
+        Route::patch('users/{user}',    [UserController::class, 'update']);
+        Route::delete('users/{user}',   [UserController::class, 'destroy']);
+
+        Route::get('dashboard/resumo',          [DashboardController::class, 'resumoMensal']);
+        Route::get('dashboard/inadimplentes',   [DashboardController::class, 'inadimplentes']);
+        Route::get('dashboard/recebidos-hoje',  [DashboardController::class, 'recebidosHoje']);
     });
 
     // ─── Apenas Aluno ──────────────────────────────────────────────────────────
     Route::middleware('role:aluno')->group(function () {
-        // Aluno vê só as próprias informações
         Route::get('me/aluno', [UserController::class, 'meuAluno']);
     });
 });
