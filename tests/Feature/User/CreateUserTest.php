@@ -114,7 +114,7 @@ class CreateUserTest extends TestCase
     {
         $professor = User::factory()->professor()->create();
         $this->actingAs($professor, 'sanctum');
-
+    
         $response = $this->postJson('/api/alunos', [
             'nome'           => 'Aluno Novo',
             'telefone'       => '5541999990000',
@@ -122,7 +122,7 @@ class CreateUserTest extends TestCase
             'dia_vencimento' => 10,
             'data_matricula' => '2026-01-01',
         ]);
-
+    
         $response->assertCreated();
     }
 

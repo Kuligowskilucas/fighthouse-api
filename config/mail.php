@@ -97,6 +97,9 @@ return [
             'retry_after' => 60,
         ],
 
+        'pix_chave'           => env('PIX_CHAVE'),
+        'lembrete_dias_antes' => (int) env('LEMBRETE_DIAS_ANTES', 3),
+
     ],
 
     /*
@@ -115,4 +118,7 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+
+    'pix_chave'           => env('PIX_CHAVE'),
+    'lembrete_dias_antes' => (int) env('LEMBRETE_DIAS_ANTES', 3),
 ];
