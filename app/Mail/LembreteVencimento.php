@@ -13,10 +13,10 @@ class LembreteVencimento extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(
-        public readonly Mensalidade $mensalidade,
-        public readonly string $pixChave,
-    ) {}
+    public function __construct(public readonly Mensalidade $mensalidade, public readonly string $pixChave, public readonly bool $atrasada = false) 
+    {
+
+    }
 
     public function envelope(): Envelope
     {

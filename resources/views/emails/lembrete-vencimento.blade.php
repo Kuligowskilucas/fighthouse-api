@@ -5,48 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lembrete de vencimento</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 32px 24px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-        .header h1 {
-            font-size: 22px;
-            color: #111;
-            margin: 0;
-        }
-        .info-box {
-            background-color: #f9f9f9;
-            border-left: 4px solid #111;
-            border-radius: 4px;
-            padding: 16px 20px;
-            margin: 20px 0;
-        }
-        .info-box p {
-            margin: 6px 0;
-            font-size: 15px;
-        }
-        .info-box .label {
-            color: #666;
-            font-size: 13px;
-        }
-        .info-box .value {
-            font-weight: bold;
-            font-size: 16px;
-        }
+        body {font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333;}
+        .container {max-width: 500px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; padding: 32px 24px;}
+        .header {text-align: center; margin-bottom: 28px;}
+        .header h1 {font-size: 22px; color: #111; margin: 0;}
+        .info-box {background-color: #f9f9f9; border-left: 4px solid #111; border-radius: 4px; padding: 16px 20px; margin: 20px 0;}
+        .info-box p {margin: 6px 0; font-size: 15px;}
+        .info-box .label {color: #666; font-size: 13px;}
+        .info-box .value {font-weight: bold; font-size: 16px;}
         .pix-box {
             background-color: #111;
             color: #fff;
@@ -83,7 +49,11 @@
 
         <p>Olá, <strong>{{ $mensalidade->aluno->nome }}</strong>!</p>
 
-        <p>Passando para lembrar que sua mensalidade está próxima do vencimento:</p>
+        @if($atrasada)
+          <p>Passando para lembrar que sua mensalidade está <strong>em atraso</strong>:</p>
+        @else
+          <p>Passando para lembrar que sua mensalidade está próxima do vencimento:</p>
+        @endif
 
         <div class="info-box">
             <p>

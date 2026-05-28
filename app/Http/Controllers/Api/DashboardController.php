@@ -36,6 +36,7 @@ class DashboardController extends Controller
         $atrasadasGeral = Mensalidade::query()
             ->whereNull('data_pagamento')
             ->where('data_vencimento', '<', Carbon::today())
+            ->whereHas('aluno', fn ($q) => $q->where('ativo', true))
             ->get();
 
         $valorAtrasado = (float) $atrasadasGeral->sum('valor');
@@ -69,6 +70,7 @@ class DashboardController extends Controller
             ->with('aluno.plano')
             ->whereNull('data_pagamento')
             ->where('data_vencimento', '<', Carbon::today())
+            ->whereHas('aluno', fn ($q) => $q->where('ativo', true))
             ->orderBy('data_vencimento', 'asc')
             ->get();
 

@@ -27,7 +27,7 @@ class EnviarLembretes extends Command
             ->with('aluno')
             ->whereNull('data_pagamento')
             ->whereDate('data_vencimento', $dataAlvo)
-            ->whereHas('aluno', fn ($q) => $q->whereNotNull('email')->where('email', '!=', ''))
+            ->whereHas('aluno', fn ($q) => $q->whereNotNull('email')->where('email', '!=', '')->where('ativo', true))
             ->get();
 
         if ($mensalidades->isEmpty()) {
@@ -37,11 +37,12 @@ class EnviarLembretes extends Command
 
         $enviados = 0;
         $falhas   = 0;
+        $atrasada = $diasAntes < 0;
 
         foreach ($mensalidades as $mensalidade) {
             try {
                 Mail::to($mensalidade->aluno->email)
-                    ->send(new LembreteVencimento($mensalidade, $pixChave));
+                    ->send(new LembreteVencimento($mensalidade, $pixChave, $atrasada));
 
                 $this->line("  ✓ {$mensalidade->aluno->nome} <{$mensalidade->aluno->email}>");
                 $enviados++;

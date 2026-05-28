@@ -12,5 +12,10 @@ Schedule::command('sanctum:prune-expired --hours=24')->daily();
 Schedule::command('mensalidades:gerar')->monthlyOn(1, '00:00');
 
 Schedule::command('lembretes:enviar')
-    ->dailyAt('11:00')
+    ->dailyAt('08:00')
     ->timezone('America/Sao_Paulo');
+
+Schedule::command('lembretes:enviar --dias=-5')
+    ->dailyAt('08:00')
+    ->timezone('America/Sao_Paulo');
+

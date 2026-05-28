@@ -67,16 +67,11 @@ class AlunoController extends Controller
         return new AlunoResource($aluno);
     }
 
-    public function destroy(Aluno $aluno): Response|JsonResponse
+    public function destroy(Aluno $aluno): Response
     {
-        if ($aluno->mensalidades()->exists()) {
-            return response()->json([
-                'message' => 'Não é possível excluir um aluno com mensalidades registradas. Marque como inativo.',
-            ], 409);
-        }
-
+        $aluno->mensalidades()->delete();
         $aluno->delete();
-
+    
         return response()->noContent();
     }
 }

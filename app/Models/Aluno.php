@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 class Aluno extends Model
 {
@@ -86,13 +87,13 @@ class Aluno extends Model
         return [
             'total_mensalidades' => $mensalidades->count(),
             'pagas'              => $mensalidades->whereNotNull('data_pagamento')->count(),
-            'atrasadas'          => $mensalidades
+            'atrasadas' => $mensalidades
                 ->whereNull('data_pagamento')
-                ->where('data_vencimento', '<', now())
+                ->where('data_vencimento', '<', Carbon::today())
                 ->count(),
-            'abertas'            => $mensalidades
+            'abertas' => $mensalidades
                 ->whereNull('data_pagamento')
-                ->where('data_vencimento', '>=', now())
+                ->where('data_vencimento', '>=', Carbon::today())
                 ->count(),
             'valor_total_pago'   => (float) $mensalidades
                 ->whereNotNull('data_pagamento')
