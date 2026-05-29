@@ -10,13 +10,15 @@ class PlanoResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'nome' => $this->nome,
+            'id'           => $this->id,
+            'nome'         => $this->nome,
             'valor' => (float) $this->valor,
-            'frequencia_semanal' => $this->frequencia_semanal,
-            'ativo' => $this->ativo,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'ativo'        => $this->ativo,
+            'dias_semana'  => $this->dias_semana,
+            'horarios'     => $this->whenLoaded('horarios', fn() =>
+                $this->horarios->pluck('horario')->values()
+            ),
+            'alunos_count' => $this->whenCounted('alunos'),
         ];
     }
 }

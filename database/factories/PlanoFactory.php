@@ -18,7 +18,11 @@ class PlanoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nome'               => $this->faker->word(),
+            'valor'              => $this->faker->randomFloat(2, 80, 300),
+            'frequencia_semanal' => $this->faker->randomElement([2, 3, null]),
+            'ativo'              => true,
+            'dias_semana'        => null,
         ];
     }
 }

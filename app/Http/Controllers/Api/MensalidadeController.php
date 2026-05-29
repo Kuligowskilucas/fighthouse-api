@@ -131,7 +131,7 @@ class MensalidadeController extends Controller
     public function gerar(GerarMensalidadesRequest $request, GeradorDeMensalidades $gerador): JsonResponse 
     {
         $mesReferencia = $request->filled('mes_referencia')
-            ? Carbon::createFromFormat('Y-m', $request->input('mes_referencia'))
+            ? Carbon::createFromFormat('Y-m-d', $request->input('mes_referencia') . '-01')
             : null;
 
         $resultado = $gerador->gerar($mesReferencia);

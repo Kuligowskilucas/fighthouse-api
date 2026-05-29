@@ -27,6 +27,9 @@ class UpdatePlanoRequest extends FormRequest
             'valor' => ['sometimes', 'required', 'numeric', 'min:0', 'max:9999.99'],
             'frequencia_semanal' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:7'],
             'ativo' => ['sometimes', 'boolean'],
+            'dias_semana' => ['nullable', 'string', 'max:50'],
+            'horarios'    => ['nullable', 'array'],
+            'horarios.*'  => ['string', 'regex:/^\d{2}:\d{2}$/'],
         ];
     }
 }

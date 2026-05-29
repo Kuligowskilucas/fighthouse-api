@@ -42,7 +42,7 @@ class GerarMensalidades extends Command
         }
 
         try {
-            return Carbon::createFromFormat('Y-m', $mes);
+            return Carbon::createFromFormat('Y-m-d', $mes . '-01');
         } catch (\Exception) {
             return false;
         }
