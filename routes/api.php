@@ -8,11 +8,15 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PagamentoController;
+use App\Http\Controllers\Api\MercadoPagoWebhookController;
 
 
 // ─── Pública ──────────────────────────────────────────────────────────────────
 Route::post('login', [AuthController::class, 'login'])
     ->middleware('throttle:5,1');
+
+Route::post('webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1');
 
 // ─── Autenticado (todos os roles) ─────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {

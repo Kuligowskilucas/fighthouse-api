@@ -1,0 +1,15 @@
+[90m= [39m[34;4mApp\Models\Aluno[39;24m {#7994
+    [34mativo[39m: [36mtrue[39m,
+    [34mnome[39m: [32m"[39m[32mAluno Teste[39m[32m"[39m,
+    [34mtelefone[39m: [32m"[39m[32m5548954891872[39m[32m"[39m,
+    [34memail[39m: [36mnull[39m,
+    [34mplano_id[39m: [35m3[39m,
+    [34mvalor_personalizado[39m: [36mnull[39m,
+    [34mdia_vencimento[39m: [35m12[39m,
+    [34mdata_matricula[39m: [32m"[39m[32m2025-02-12 03:19:00[39m[32m"[39m,
+    [34mhorario_treino[39m: [36mnull[39m,
+    [34mobservacoes[39m: [32m"[39m[32mEnim sed sequi praesentium non.[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-06-15 13:56:32[39m[32m"[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-06-15 13:56:32[39m[32m"[39m,
+    [34mid[39m: [35m36[39m,
+  }

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Requests\Mensalidade\GerarMensalidadesRequest;
 use App\Services\GeradorDeMensalidades;
+use App\Actions\MarcarMensalidadePaga;
 
 class MensalidadeController extends Controller
 {
@@ -85,22 +86,21 @@ class MensalidadeController extends Controller
      * Marca a mensalidade como paga.
      * Endpoint específico porque é a ação mais comum do sistema.
      */
-    public function marcarPagamento(
-        MarcarPagamentoRequest $request,
-        Mensalidade $mensalidade
-    ): MensalidadeResource|JsonResponse {
-        if ($mensalidade->estaPaga()) {
+    public function marcarPagamento(MarcarPagamentoRequest $request, Mensalidade $mensalidade, MarcarMensalidadePaga $action): MensalidadeResource|JsonResponse 
+    {
+        $marcou = $action->executar(
+            $mensalidade,
+            $request->forma_pagamento,
+            $request->input('data_pagamento'),
+            $request->observacoes,
+        );
+
+        if (! $marcou) {
             return response()->json([
-                'message' => 'Essa mensalidade já foi paga em ' 
+                'message' => 'Essa mensalidade já foi paga em '
                     . $mensalidade->data_pagamento->format('d/m/Y') . '.',
             ], 409);
         }
-
-        $mensalidade->update([
-            'data_pagamento' => $request->input('data_pagamento', Carbon::today()),
-            'forma_pagamento' => $request->forma_pagamento,
-            'observacoes' => $request->observacoes ?? $mensalidade->observacoes,
-        ]);
 
         $mensalidade->load('aluno.plano');
 

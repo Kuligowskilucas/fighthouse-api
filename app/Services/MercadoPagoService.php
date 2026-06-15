@@ -6,6 +6,8 @@ use App\Models\Transacao;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Resources\Preference;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\Resources\Payment;
 
 class MercadoPagoService
 {
@@ -41,7 +43,6 @@ class MercadoPagoService
             ]],
             'payer'              => $payer,
             'external_reference' => (string) $transacao->id,
-            'notification_url'   => config('services.mercadopago.webhook_url'),
             'back_urls' => [
                 'success' => $frontend . '/pagamento/sucesso',
                 'pending' => $frontend . '/pagamento/pendente',
@@ -49,5 +50,10 @@ class MercadoPagoService
             ],
             'auto_return' => 'approved',
         ]);
+    }
+
+    public function buscarPagamento(string $paymentId): Payment
+    {
+        return (new PaymentClient())->get($paymentId);
     }
 }
