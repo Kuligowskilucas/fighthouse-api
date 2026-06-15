@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\MensalidadeController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PagamentoController;
+
 
 // ─── Pública ──────────────────────────────────────────────────────────────────
 Route::post('login', [AuthController::class, 'login'])
@@ -68,5 +70,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // ─── Apenas Aluno ──────────────────────────────────────────────────────────
     Route::middleware('role:aluno')->group(function () {
         Route::get('me/aluno', [UserController::class, 'meuAluno']);
+        Route::post('me/mensalidades/{mensalidade}/pagar', [PagamentoController::class, 'iniciar']);
     });
 });

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mensalidade extends Model
 {
@@ -33,6 +34,10 @@ class Mensalidade extends Model
     public function aluno(): BelongsTo
     {
         return $this->belongsTo(Aluno::class);
+    }
+    public function transacoes(): HasMany
+    {
+        return $this->hasMany(Transacao::class);
     }
 
     /**
