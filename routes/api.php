@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('dashboard/resumo',          [DashboardController::class, 'resumoMensal']);
         Route::get('dashboard/inadimplentes',   [DashboardController::class, 'inadimplentes']);
         Route::get('dashboard/recebidos-hoje',  [DashboardController::class, 'recebidosHoje']);
+        Route::get('dashboard/ciclo',           [DashboardController::class, 'resumoCiclo']);
     });
 
     // ─── Apenas Aluno ──────────────────────────────────────────────────────────

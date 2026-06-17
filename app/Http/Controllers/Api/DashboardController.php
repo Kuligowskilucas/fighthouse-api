@@ -9,6 +9,8 @@ use App\Models\Mensalidade;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Support\CicloCobranca;
+use Carbon\CarbonImmutable;
 
 class DashboardController extends Controller
 {
@@ -123,6 +125,47 @@ class DashboardController extends Controller
             'data'           => MensalidadeResource::collection($mensalidades),
             'total_recebido' => (float) $mensalidades->sum('valor'),
             'quantidade'     => $mensalidades->count(),
+        ]);
+    }
+
+    /**
+     * Resumo do dashboard por ciclo de cobrança (fechamento dia 5).
+     * ?periodo=YYYY-MM define o ciclo; padrão = ciclo aberto atual.
+     * "Pagante de junho" = quem pagou dentro da janela [05/06, 05/07),
+     * mesmo que a mensalidade seja de outro mês (vai em mes_referencia).
+     */
+    public function resumoCiclo(Request $request): JsonResponse
+    {
+        $ciclo = $request->filled('periodo')
+            ? CicloCobranca::deReferencia($request->string('periodo'))
+            : CicloCobranca::atual();
+
+        $pagas = Mensalidade::query()
+            ->with('aluno')
+            ->whereNotNull('data_pagamento')
+            ->where('data_pagamento', '>=', $ciclo->inicio->toDateString())
+            ->where('data_pagamento', '<', $ciclo->fim->toDateString())
+            ->orderBy('data_pagamento', 'desc')
+            ->get();
+
+        $atual = CicloCobranca::atual();
+        $primeiroPagamento = Mensalidade::whereNotNull('data_pagamento')->min('data_pagamento');
+
+        $temAnterior = $primeiroPagamento !== null
+            && CicloCobranca::queContem(CarbonImmutable::parse($primeiroPagamento))
+                ->inicio->lt($ciclo->inicio);
+
+        return response()->json([
+            'periodo' => [
+                'referencia'   => $ciclo->referencia(),
+                'inicio'       => $ciclo->inicio->toDateString(),
+                'fim'          => $ciclo->fim->toDateString(),
+                'tem_anterior' => $temAnterior,
+                'tem_proximo'  => $ciclo->inicio->lt($atual->inicio),
+            ],
+            'total_recebido' => (float) $pagas->sum('valor'),
+            'quantidade'     => $pagas->count(),
+            'pagantes'       => MensalidadeResource::collection($pagas),
         ]);
     }
 }
