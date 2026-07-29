@@ -45,8 +45,11 @@ class MensalidadeController extends Controller
                     };
                 }
             )
-            ->orderBy('data_vencimento', 'desc')
-            ->paginate($request->integer('per_page', 20));
+            ->when(
+                $request->filled('ativo'),
+                fn ($q) => $q->whereHas('aluno', fn ($sub) => $sub->where('ativo', $request->boolean('ativo')))
+            )
+            ->orderBy('data_vencimento', 'desc')->orderBy('data_vencimento', 'desc')->paginate($request->integer('per_page', 20));
 
         return MensalidadeResource::collection($mensalidades);
     }
