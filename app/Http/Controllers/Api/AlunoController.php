@@ -61,8 +61,18 @@ class AlunoController extends Controller
 
     public function update(UpdateAlunoRequest $request, Aluno $aluno): AlunoResource
     {
+        $valorAntigo = (float) $aluno->valorMensalidade();
+
         $aluno->update($request->validated());
-        $aluno->load('plano');
+        $aluno->load('plano'); 
+
+        $valorNovo = (float) $aluno->valorMensalidade();
+
+        if ($valorAntigo !== $valorNovo) {
+            $aluno->mensalidades()
+                ->whereNull('data_pagamento')
+                ->update(['valor' => $valorNovo]);
+        }
 
         return new AlunoResource($aluno);
     }
