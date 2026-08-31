@@ -7,7 +7,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.5-777BB4?logo=php)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
 
-REST API built with Laravel 13 and PostgreSQL, using Sanctum for authentication. A non‑profit project developed for Fight House Club, replacing a paper‑based system with digital student registration, payment tracking, automatic monthly fee generation, and a monthly dashboard.
+REST API built with Laravel 13 and PostgreSQL, using Sanctum for authentication. A project developed for Fight House Club, replacing a paper‑based system with digital student registration, payment tracking, automatic monthly fee generation, and a monthly dashboard.
 
 > 🇧🇷 Português · [🇺🇸 English](README.en.md) (coming soon)
 
