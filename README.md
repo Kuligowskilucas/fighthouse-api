@@ -15,7 +15,7 @@ REST API built with Laravel 13 and PostgreSQL, using Sanctum for authentication.
 
 ## About the project
 
-Fight House Club is a jiu-jitsu academy whose owner, Marquete, currently manages the monthly fees of ~30 students in a physical notebook. This project is a free digital alternative focused on three things:
+Fight House Club is a jiu-jitsu academy whose owner, Marquete, currently manages the monthly fees of ~60 students in a physical notebook. This project is a free digital alternative focused on three things:
 
 1. **Centralized registration** of students with their respective plans.
 2. **Payment tracking** with history and automatic delinquency calculation.
@@ -101,7 +101,7 @@ docker run --rm \
 ./vendor/bin/sail artisan migrate --seed
 ```
 
-The API will be available at `http://localhost`. In development, the seeder creates the user **`marquete@fighthouse.local`** with password **`senha123`**, along with 30 fictional students and varied monthly fees.
+The API will be available at `http://localhost`. In development, the seeder creates the user **`marquete@fighthouse.local`** with password **`senha123`**, along with 60 fictional students and varied monthly fees.
 
 ### Sail alias (recommended)
 
